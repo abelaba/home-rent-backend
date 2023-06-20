@@ -7,7 +7,7 @@ const cors = require("cors");
 
 // * IMPORT ROUTES
 const authRoute = require('./routes/auth');
-// const rentingRoute = require('./routes/renting');
+const rentingRoute = require('./routes/renting');
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ app.use('/uploads/', express.static('uploads'));
 
 // * ROUTE MIDDLEWARE
 app.use('/api/user', authRoute);
-// app.use('/api/rental',rentingRoute);
+app.use('/api/rental',rentingRoute);
 
 
 // * STARTS SERVER
