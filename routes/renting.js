@@ -78,7 +78,7 @@ router.get('/viewAll', async (req, res) => {
 
 
 // * VIEW LOGGED IN USER RENTAL PROPERTIES
-router.get('/view', verify , async (req, res) => {
+router.get('/viewMyProperties', verify , async (req, res) => {
 
     const query = await Rental.find({ userId: req.user._id });
     if(query.length!=0) return res.send(query);
@@ -113,22 +113,67 @@ router.get('/view/:id', async (req, res) => {
 // * UPDATE RENTAL PROPERTY 
 router.put('/update/:id', verify, upload.single('rentalImage'), async (req, res) => {
 
-    // * LETS VALIDATE THE DATA
-    const { error } = rentalValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
     // * CHECK IF ID PARAMETER IS CORRECT
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) return res.status(400).send("Invalid ID");
 
-    const rental = { address: req.body.address, rentalImage: req.file.path};
-    var query = await Rental.findByIdAndUpdate(req.params.id, rental);
-    if(!query) return res.status(404).send("Property not found");
-    fs.unlink(query.rentalImage,(err)=>{
-        if(err) throw err;
-        console.log("File deleted "+ query.rentalImage);
+    const form = formidable.IncomingForm();
+    // console.log(form);
+    form.multiples = true;
+    form.maxFileSize = 50 * 1024 * 1024; // 5MB
+    // console.log(form);
+
+    form.parse(req, async (err, fields, files) => {
+        console.log(fields.address);
+        const { error } = rentalValidation(fields);
+        if (error) {
+            console.log(error);
+            return res.status(400).send(error.details[0].message)};
+
+        if(files.rentalImage){
+            var oldPath = files.rentalImage.path;
+            var newFileName = "rentalImage"+ Date.now() + ".jpg";
+            var newPath = path.join(__dirname, '../uploads')+ '/' + newFileName;
+            var rawData = fs.readFileSync(oldPath);
+            try {
+                fs.writeFile(newPath, rawData, function(err){
+                    if(err) {
+                        console.log(err);
+                        return res.statusCode(500).send("Couldn't write file");
+                    }
+                });
+                const rental = { address: fields.address, rentalImage: `uploads/${newFileName}`};
+
+                const findUser = await User.findOne({ _id: req.user });
+                if(!findUser) return res.status(404).send("User not Found");
+
+                
+
+                var query = await Rental.findByIdAndUpdate(req.params.id, rental);
+                if(!query) return res.status(404).send("Property not found");
+                fs.unlink(query.rentalImage,(err)=>{
+                    if(err) throw err;
+                    console.log("File deleted "+ query.rentalImage);
+                });
+                query = await Rental.findById(req.params.id);
+                console.log("Success");
+                res.status(201).send(query); 
+                
+            } catch (err) {
+                console.log("error");
+                res.status(400).send(err);
+            }
+
+        }else{
+
+            const rental = { address: fields.address};
+            var query = await Rental.findByIdAndUpdate(req.params.id, rental);
+            if(!query) return res.status(404).send("Property not found");
+            query = await Rental.findById(req.params.id);
+            res.status(201).send(query);
+
+        }       
+
     });
-    query = await Rental.findById(req.params.id);
-    res.status(201).send(query);
 
     
 });
