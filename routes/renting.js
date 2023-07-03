@@ -15,7 +15,7 @@ const path = require('path');
 
 
 // * ADD RENTAL PROPERTY
-router.post('/add', verify, upload.single('rentalImage') , async (req, res) => {
+router.post('/add', verify , async (req, res) => {
 
     const form = formidable.IncomingForm();
     // console.log(form);
@@ -111,8 +111,7 @@ router.get('/view/:id', async (req, res) => {
 
 
 // * UPDATE RENTAL PROPERTY 
-router.put('/update/:id', verify, upload.single('rentalImage'), async (req, res) => {
-
+router.put('/update/:id', verify, async (req, res) => {
     // * CHECK IF ID PARAMETER IS CORRECT
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) return res.status(400).send("Invalid ID");
 
