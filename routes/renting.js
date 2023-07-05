@@ -192,7 +192,7 @@ router.delete('/delete/:id', verify, async (req, res) => {
         if(err) throw err;
         console.log("File deleted "+ query.rentalImage);
     });
-    res.status(204);
+    res.status(204).send("Deleted property");
   
 });
 
