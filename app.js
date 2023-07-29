@@ -15,8 +15,7 @@ dotenv.config();
 
 // * CONNECT TO DB
 mongoose.connect(
-    // process.env.DB_connect,
-    'mongodb://127.0.0.1:27017/Home_renting_app',
+    process.env.DB_connect,
     { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () => {
         console.log("*** DATABASE HAS CONNECTED SUCCESSFULLY");
     })
