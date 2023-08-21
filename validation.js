@@ -25,13 +25,16 @@ const loginValidation = data => {
 };
 
 // * VALIDATING RENTAL ENTRY
-const rentalValidation = data =>{
-
+const rentalValidation = data => {
     const schema = Joi.object({
-        address: Joi.string().min(4).required(),
+        address: Joi.string().required(),
+        type: Joi.string().required(),
+        bedrooms: Joi.string().required(),
+        bathrooms: Joi.string().required(),
+        area: Joi.string().required(),
+        price: Joi.string().required(),
     });
     return schema.validate(data);
-
 };
 
 

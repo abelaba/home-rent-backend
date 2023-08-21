@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 // * USER SCHEMA
 
 const messageSchema = new mongoose.Schema({
+    senderEmail:{
+        type:String,
+        required:"senderEmail is required"
+    },
     senderName:{
         type:String,
         required:"senderName is required"

@@ -3,30 +3,48 @@ const mongoose = require('mongoose');
 // * RENTAL SCHEMA
 
 const rentalSchema = new mongoose.Schema({
-    userId:{
-        type:String,
+    userId: {
+        type: String,
         required: true
     },
-    address:{
+    address: {
         type: String,
         required: true,
         max: 255,
         min: 6,
     },
-    rentalImage:{
+    rentalImage: {
         type: String,
-        required:true
+        required: true
     },
-    available:{
+    type: {
+        type: String,
+        required: true
+    },
+    bedrooms: {
+        type: Number,
+        required: true
+    },
+    bathrooms: {
+        type: Number,
+        required: true
+    },
+    area: {
+        type: Number,
+        required: true
+    },
+    available: {
         type: Boolean,
-        default:true
+        default: true
+    },
+    price: {
+        type: Number,
+        required: true
     },
     date: {
         type: Date,
         default: Date.now
     }
 });
-
-
 
 module.exports = mongoose.model('Rental', rentalSchema);

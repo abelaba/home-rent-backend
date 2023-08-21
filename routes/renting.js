@@ -44,7 +44,13 @@ router.post('/add', verify , async (req, res) => {
         const rental = new Rental({
             userId: findUser._id,
             address: fields.address,
-            rentalImage: `uploads/${newFileName}`
+            rentalImage: `uploads/${newFileName}`,
+            type: fields.type,
+            bedrooms: fields.bedrooms,
+            bathrooms: fields.bathrooms,
+            area: fields.area,
+            available: fields.available,
+            price: fields.price
         });
 
         try {
@@ -70,6 +76,7 @@ router.post('/add', verify , async (req, res) => {
 router.get('/viewAll', async (req, res) => {
 
     const query = await Rental.find();
+    console.log(query);
     return res.send(query);
 
 
@@ -139,8 +146,18 @@ router.put('/update/:id', verify, async (req, res) => {
                         return res.statusCode(500).send("Couldn't write file");
                     }
                 });
-                const rental = { address: fields.address, rentalImage: `uploads/${newFileName}`};
+                const rental = {
+                    address: fields.address,
+                    rentalImage: `uploads/${newFileName}`,
+                    type: fields.type,
+                    bedrooms: fields.bedrooms,
+                    bathrooms: fields.bathrooms,
+                    area: fields.area,
+                    available: fields.available,
+                    price: fields.price
+                };
 
+                console.log(rental);
                 const findUser = await User.findOne({ _id: req.user });
                 if(!findUser) return res.status(404).send("User not Found");
 
@@ -157,13 +174,21 @@ router.put('/update/:id', verify, async (req, res) => {
                 res.status(201).send(query); 
                 
             } catch (err) {
-                console.log("error");
+                console.log(err);
                 res.status(400).send(err);
             }
 
         }else{
 
-            const rental = { address: fields.address};
+            const rental = {
+                address: fields.address,
+                type: fields.type,
+                bedrooms: fields.bedrooms,
+                bathrooms: fields.bathrooms,
+                area: fields.area,
+                available: fields.available,
+                price: fields.price
+            };
             var query = await Rental.findByIdAndUpdate(req.params.id, rental);
             if(!query) return res.status(404).send("Property not found");
             query = await Rental.findById(req.params.id);

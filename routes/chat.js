@@ -61,15 +61,18 @@ router.get('/loadMessages/:id',verify,async(req,res)=>{
 
 router.put('/sendMessage',verify,async(req,res)=>{
 
-    console.log(req.body.chatId);
+    console.log("Send mEssage");
     const user = await User.findOne({ _id: req.user._id });
     if(!user) return res.status(404).send("User not Found");
 
     const chat = await Chatroom.findOne({_id:req.body.chatId});
     var message = new Message({
+        senderEmail: user.email,
         senderName : user.name,
-        message: req.body.message
+        message: req.body.message        
     });
+    console.log("Me message")
+    console.log(message);
     var query = await Chatroom.findByIdAndUpdate(chat._id,
         { "$push": { "messages": message}});
     console.log(query);
